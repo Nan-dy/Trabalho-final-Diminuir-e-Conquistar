@@ -1,25 +1,21 @@
 def merge_sort(arr):
-    # Caso base: lista com 1 ou 0 elementos está ordenada
+   
     if len(arr) <= 1:
         return arr
 
-    # Dividir: encontra o meio da lista
     meio = len(arr) // 2
     esquerda = arr[:meio]
     direita = arr[meio:]
 
-    # Conquista: aplica merge_sort recursivamente em cada metade
     esquerda = merge_sort(esquerda)
     direita = merge_sort(direita)
 
-    # Combina: mescla as duas metades ordenadas
     return merge(esquerda, direita)
 
 def merge(esquerda, direita):
     resultado = []
     i = j = 0
 
-    # Percorre as duas listas e mescla em ordem
     while i < len(esquerda) and j < len(direita):
         if esquerda[i] < direita[j]:
             resultado.append(esquerda[i])
@@ -28,7 +24,6 @@ def merge(esquerda, direita):
             resultado.append(direita[j])
             j += 1
 
-    # Adiciona os elementos restantes (se houver) de cada lista
     resultado.extend(esquerda[i:])
     resultado.extend(direita[j:])
     return resultado
