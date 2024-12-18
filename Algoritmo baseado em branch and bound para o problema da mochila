@@ -7,7 +7,6 @@ class Item:
         self.valor_por_peso = valor / peso
 
 def knapsack_branch_and_bound(capacidade, itens):
-    # Ordenar itens por valor/peso em ordem decrescente
     itens = sorted(itens, key=lambda x: x.valor_por_peso, reverse=True)
 
     class Nodo:
@@ -43,7 +42,6 @@ def knapsack_branch_and_bound(capacidade, itens):
     while fila:
         nodo_atual = heapq.heappop(fila)
         if nodo_atual.limite > melhor_valor:
-            # Nodo com o item incluído
             if nodo_atual.nivel + 1 < len(itens):
                 proximo = itens[nodo_atual.nivel + 1]
                 incluir = Nodo(
@@ -58,7 +56,6 @@ def knapsack_branch_and_bound(capacidade, itens):
                 if incluir.limite > melhor_valor:
                     heapq.heappush(fila, incluir)
 
-            # Nodo sem o item incluído
             nao_incluir = Nodo(
                 nodo_atual.nivel + 1,
                 nodo_atual.valor,
