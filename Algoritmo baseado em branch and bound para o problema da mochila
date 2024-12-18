@@ -1,0 +1,106 @@
+import heapq
+
+class Item:
+    def __init__(self, valor, peso):
+        self.valor = valor
+        self.peso = peso
+        self.valor_por_peso = valor / peso
+
+def knapsack_branch_and_bound(capacidade, itens):
+    # Ordenar itens por valor/peso em ordem decrescente
+    itens = sorted(itens, key=lambda x: x.valor_por_peso, reverse=True)
+
+    class Nodo:
+        def __init__(self, nivel, valor, peso, limite):
+            self.nivel = nivel
+            self.valor = valor
+            self.peso = peso
+            self.limite = limite
+        def __lt__(self, outro):
+            return self.limite > outro.limite  # Usado para o heap (maior limite primeiro)
+
+    def calcula_limite(nodo):
+        if nodo.peso > capacidade:
+            return 0  # Nodo inválido
+        limite = nodo.valor
+        peso_total = nodo.peso
+        i = nodo.nivel + 1
+        while i < len(itens) and peso_total + itens[i].peso <= capacidade:
+            peso_total += itens[i].peso
+            limite += itens[i].valor
+            i += 1
+        if i < len(itens):
+            limite += (capacidade - peso_total) * itens[i].valor_por_peso
+        return limite
+
+    fila = []
+    raiz = Nodo(-1, 0, 0, 0)
+    raiz.limite = calcula_limite(raiz)
+    heapq.heappush(fila, raiz)
+
+    melhor_valor = 0
+
+    while fila:
+        nodo_atual = heapq.heappop(fila)
+        if nodo_atual.limite > melhor_valor:
+            # Nodo com o item incluído
+            if nodo_atual.nivel + 1 < len(itens):
+                proximo = itens[nodo_atual.nivel + 1]
+                incluir = Nodo(
+                    nodo_atual.nivel + 1,
+                    nodo_atual.valor + proximo.valor,
+                    nodo_atual.peso + proximo.peso,
+                    0
+                )
+                incluir.limite = calcula_limite(incluir)
+                if incluir.peso <= capacidade and incluir.valor > melhor_valor:
+                    melhor_valor = incluir.valor
+                if incluir.limite > melhor_valor:
+                    heapq.heappush(fila, incluir)
+
+            # Nodo sem o item incluído
+            nao_incluir = Nodo(
+                nodo_atual.nivel + 1,
+                nodo_atual.valor,
+                nodo_atual.peso,
+                0
+            )
+            nao_incluir.limite = calcula_limite(nao_incluir)
+            if nao_incluir.limite > melhor_valor:
+                heapq.heappush(fila, nao_incluir)
+
+    return melhor_valor
+
+
+# Testes
+def executar_testes():
+    # Teste 1
+    itens1 = [
+        Item(60, 10),
+        Item(100, 20),
+        Item(120, 30)
+    ]
+    capacidade1 = 50
+    print(f"Teste 1: {knapsack_branch_and_bound(capacidade1, itens1)}")  # Saída esperada: 220
+
+    # Teste 2
+    itens2 = [
+        Item(10, 1),
+        Item(40, 2),
+        Item(30, 3),
+        Item(50, 5)
+    ]
+    capacidade2 = 6
+    print(f"Teste 2: {knapsack_branch_and_bound(capacidade2, itens2)}")  # Saída esperada: 90
+
+    # Teste 3
+    itens3 = [
+        Item(24, 12),
+        Item(18, 10),
+        Item(10, 8),
+        Item(25, 15)
+    ]
+    capacidade3 = 20
+    print(f"Teste 3: {knapsack_branch_and_bound(capacidade3, itens3)}")  # Saída esperada: 43
+
+
