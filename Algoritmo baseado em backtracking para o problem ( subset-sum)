@@ -2,9 +2,7 @@ flag = False
 
 def print_subset_sum(i, n, _set, target_sum, subset):
     global flag
-    # Se a soma alvo for zero, existe um subconjunto válido
     if target_sum == 0:
-        # Imprime o subconjunto válido
         flag = True
         print("[", end=" ")
         for element in subset:
@@ -13,21 +11,15 @@ def print_subset_sum(i, n, _set, target_sum, subset):
         return
 
     if i == n:
-        # Retorna caso tenha alcançado o final do array
         return
 
-    # Não considerar o elemento atual
     print_subset_sum(i + 1, n, _set, target_sum, subset)
 
-    # Considerar o elemento atual, se ele for menor ou igual à soma alvo
     if _set[i] <= target_sum:
-        # Adiciona o elemento atual ao subconjunto
         subset.append(_set[i])
 
-        # Chamada recursiva considerando o elemento atual
         print_subset_sum(i + 1, n, _set, target_sum - _set[i], subset)
 
-        # Remove o último elemento após a chamada recursiva para restaurar o estado original do subconjunto
         subset.pop()
 
 # Código principal
