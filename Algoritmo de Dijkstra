@@ -1,0 +1,54 @@
+import sys
+
+# Função do algoritmo de Dijkstra
+def calcular_dijkstra(grafo, origem):
+    distancias = {v: sys.maxsize for v in grafo}
+    distancias[origem] = 0
+    visitados = set()
+
+    while visitados != set(distancias):
+        vertice_atual = None
+        menor_distancia = sys.maxsize
+        for v in grafo:
+            if v not in visitados and distancias[v] < menor_distancia:
+                vertice_atual = v
+                menor_distancia = distancias[v]
+
+        visitados.add(vertice_atual)
+
+        for vizinho, peso in grafo[vertice_atual].items():
+            if distancias[vertice_atual] + peso < distancias[vizinho]:
+                distancias[vizinho] = distancias[vertice_atual] + peso
+
+    return distancias
+
+# Teste 1: Grafo padrão
+grafo1 = {
+    'A': {'B': 5, 'C': 3, 'D': 2},
+    'B': {'A': 5, 'C': 2, 'E': 4},
+    'C': {'A': 3, 'B': 2, 'D': 1},
+    'D': {'A': 2, 'C': 1, 'E': 7},
+    'E': {'B': 4, 'D': 7}
+}
+print("Teste 1: Grafo padrão")
+print(calcular_dijkstra(grafo1, 'A'))
+
+# Teste 2: Grafo com pesos diferentes
+grafo2 = {
+    'A': {'B': 1, 'C': 4},
+    'B': {'A': 1, 'C': 2, 'D': 7},
+    'C': {'A': 4, 'B': 2, 'D': 3},
+    'D': {'B': 7, 'C': 3}
+}
+print("\nTeste 2: Grafo com pesos diferentes")
+print(calcular_dijkstra(grafo2, 'A'))
+
+# Teste 3: Grafo com caminho direto mais curto
+grafo3 = {
+    'A': {'B': 2},
+    'B': {'C': 3},
+    'C': {'D': 1},
+    'D': {}
+}
+print("\nTeste 3: Grafo com caminho direto mais curto")
+print(calcular_dijkstra(grafo3, 'A'))
